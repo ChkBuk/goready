@@ -1,7 +1,7 @@
 {
-  "name": "client",
+  "name": "goready",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -37,5 +37,5 @@
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
     "typescript": "^5"
-  }
+}
 }
