@@ -116,7 +116,7 @@ export const createBookingSchema = z.object({
   arrivalAt: z.string().datetime().nullable().optional(),
   origin: z.string().max(200).nullable().optional(),
   destination: z.string().max(200).nullable().optional(),
-  details: z.record(z.unknown()).default({}),
+  details: z.record(z.string(), z.unknown()).default({}),
   cost: z.number().positive().nullable().optional(),
   currency: z.string().length(3).default('USD'),
   bookingUrl: z.string().url().nullable().optional(),
