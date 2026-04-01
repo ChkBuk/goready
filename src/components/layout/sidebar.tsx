@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Separator } from '@/components/ui/separator';
 
 const navItems = [
   { href: '/dashboard', label: 'My Trips', icon: Map },
@@ -21,17 +20,17 @@ export function Sidebar() {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r bg-card">
+    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border/50 bg-white">
       {/* Logo */}
-      <div className="flex items-center gap-2 px-6 py-4">
-        <MapPin className="h-6 w-6 text-primary" />
-        <span className="text-xl font-bold">GoReady</span>
+      <div className="flex items-center gap-2.5 px-6 py-5">
+        <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white">
+          <MapPin className="h-4 w-4" />
+        </div>
+        <span className="text-lg font-semibold tracking-tight">GoReady</span>
       </div>
 
-      <Separator />
-
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      <nav className="flex-1 px-3 py-2 space-y-1">
         {navItems.map((item) => {
           const isActive =
             pathname === item.href || pathname.startsWith(item.href + '/');
@@ -40,13 +39,13 @@ export function Sidebar() {
               key={item.label}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+                'flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors',
                 isActive
-                  ? 'bg-primary/10 text-primary'
+                  ? 'bg-accent text-primary'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className="h-[18px] w-[18px]" />
               {item.label}
             </Link>
           );
@@ -54,9 +53,9 @@ export function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="border-t p-4">
+      <div className="border-t border-border/50 p-4">
         <div className="flex items-center gap-3">
-          <Avatar className="h-8 w-8">
+          <Avatar className="h-9 w-9">
             {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}
             <AvatarFallback>
               {user?.name?.charAt(0)?.toUpperCase() || 'U'}

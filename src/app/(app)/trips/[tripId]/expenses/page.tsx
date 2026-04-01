@@ -109,14 +109,14 @@ export default function TripExpensesPage() {
   );
 
   return (
-    <div className="px-4 py-6 md:px-8 max-w-2xl mx-auto">
-      <Link href={`/trips/${tripId}`} className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), "mb-4")}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
+    <div className="px-5 py-8 md:px-10 max-w-2xl mx-auto">
+      <Link href={`/trips/${tripId}`} className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
+        <ArrowLeft className="mr-1.5 h-4 w-4" />
         Back to Trip
       </Link>
 
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-xl font-bold">Expenses</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-xl font-bold tracking-tight">Expenses</h1>
         <div className="text-right">
           <p className="text-2xl font-bold">${total.toFixed(2)}</p>
           <p className="text-xs text-muted-foreground">Total spent</p>

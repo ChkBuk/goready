@@ -53,20 +53,17 @@ export default function NewTripPage() {
   };
 
   return (
-    <div className="px-4 py-6 md:px-8 max-w-lg mx-auto">
+    <div className="px-5 py-8 md:px-10 max-w-lg mx-auto">
       <div className="mb-6">
-        <Link href="/dashboard" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }))}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
+        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+          <ArrowLeft className="mr-1.5 h-4 w-4" />
           Back
         </Link>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Create New Trip</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="rounded-2xl bg-card p-6 md:p-8 shadow-sm border border-border/50">
+        <h1 className="text-xl font-bold mb-6">Create New Trip</h1>
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
               <Label>Cover Image</Label>
               <ImageUpload value={coverImage} onChange={setCoverImage} variant="cover" />
@@ -122,7 +119,7 @@ export default function NewTripPage() {
               <Label htmlFor="currency">Currency</Label>
               <select
                 id="currency"
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
@@ -139,14 +136,13 @@ export default function NewTripPage() {
 
             <Button
               type="submit"
-              className="w-full"
+              className="w-full rounded-full h-11"
               disabled={createTrip.isPending}
             >
               {createTrip.isPending ? 'Creating...' : 'Create Trip'}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+      </div>
     </div>
   );
 }

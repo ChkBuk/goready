@@ -3,12 +3,10 @@
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button, buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ArrowLeft, MapPin, Calendar, Users } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { DayPlanner } from '@/components/trips/day-planner';
 import { TripMembers } from '@/components/trips/trip-members';
@@ -64,42 +62,42 @@ export default function TripDetailPage() {
 
   if (!trip) {
     return (
-      <div className="px-4 py-6 text-center">
+      <div className="px-5 py-8 text-center">
         <p>Trip not found</p>
-        <Link href="/dashboard" className={cn(buttonVariants(), "mt-4")}>Go back</Link>
+        <Link href="/dashboard" className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white mt-4">Go back</Link>
       </div>
     );
   }
 
   return (
-    <div className="px-4 py-6 md:px-8">
+    <div className="px-5 py-8 md:px-10">
       {/* Header */}
-      <div className="mb-6">
-        <Link href="/dashboard" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), "mb-3")}>
-          <ArrowLeft className="mr-2 h-4 w-4" />
+      <div className="mb-8">
+        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-4">
+          <ArrowLeft className="mr-1.5 h-4 w-4" />
           Back
         </Link>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl font-bold">{trip.title}</h1>
-            <div className="flex flex-wrap items-center gap-3 mt-1 text-sm text-muted-foreground">
-              <span className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5" />
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{trip.title}</h1>
+            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
+              <span className="flex items-center gap-1.5">
+                <MapPin className="h-4 w-4" />
                 {trip.destination}
               </span>
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5">
+                <Calendar className="h-4 w-4" />
                 {format(new Date(trip.startDate), 'MMM d')} -{' '}
                 {format(new Date(trip.endDate), 'MMM d, yyyy')}
               </span>
-              <span className="flex items-center gap-1">
-                <Users className="h-3.5 w-3.5" />
+              <span className="flex items-center gap-1.5">
+                <Users className="h-4 w-4" />
                 {trip.members.length} member{trip.members.length > 1 ? 's' : ''}
               </span>
             </div>
           </div>
-          <Badge variant="secondary">{trip.status}</Badge>
+          <Badge variant="secondary" className="self-start">{trip.status}</Badge>
         </div>
       </div>
 
@@ -110,26 +108,26 @@ export default function TripDetailPage() {
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
 
-        <div className="flex gap-2 mt-2">
+        <div className="flex gap-2 mt-3">
           <Link
             href={`/trips/${tripId}/expenses`}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+            className="inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           >
             Expenses
           </Link>
           <Link
             href={`/trips/${tripId}/bookings`}
-            className={cn(buttonVariants({ variant: 'outline', size: 'sm' }))}
+            className="inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
           >
             Bookings
           </Link>
         </div>
 
-        <TabsContent value="itinerary" className="mt-4">
+        <TabsContent value="itinerary" className="mt-6">
           <DayPlanner tripId={tripId} days={trip.days} />
         </TabsContent>
 
-        <TabsContent value="members" className="mt-4">
+        <TabsContent value="members" className="mt-6">
           <TripMembers tripId={tripId} members={trip.members} />
         </TabsContent>
       </Tabs>

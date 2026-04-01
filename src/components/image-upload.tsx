@@ -88,7 +88,7 @@ export function ImageUpload({ value, onChange, className, variant = 'cover' }: I
   return (
     <div className={cn('relative', className)}>
       <div
-        className="relative h-40 w-full rounded-lg overflow-hidden bg-muted cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
+        className="relative h-44 w-full rounded-2xl overflow-hidden bg-muted/50 cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
         onClick={() => inputRef.current?.click()}
       >
         {value ? (

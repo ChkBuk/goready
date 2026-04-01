@@ -1,25 +1,24 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plane } from 'lucide-react';
 
 export default function SearchFlightsPage() {
   return (
-    <div className="px-4 py-6 md:px-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Search Flights</h1>
+    <div className="px-5 py-8 md:px-10 max-w-2xl mx-auto">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Search Flights</h1>
 
-      <Card>
-        <CardContent className="flex flex-col items-center py-12 text-center">
-          <Plane className="h-16 w-16 text-muted-foreground/30 mb-4" />
-          <CardHeader className="p-0">
-            <CardTitle className="text-lg">Coming Soon</CardTitle>
-          </CardHeader>
-          <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+      <div className="rounded-2xl bg-card p-8 md:p-12 shadow-sm border border-border/50">
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center justify-center h-20 w-20 rounded-full bg-blue-50 mb-6">
+            <Plane className="h-10 w-10 text-blue-600" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Coming Soon</h2>
+          <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
             Flight search with Amadeus API integration is planned for Phase 2.
             You can manually add flight bookings to your trips in the meantime.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

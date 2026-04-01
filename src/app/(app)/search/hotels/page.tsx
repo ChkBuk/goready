@@ -1,25 +1,24 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Hotel } from 'lucide-react';
 
 export default function SearchHotelsPage() {
   return (
-    <div className="px-4 py-6 md:px-8 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Search Hotels</h1>
+    <div className="px-5 py-8 md:px-10 max-w-2xl mx-auto">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Search Hotels</h1>
 
-      <Card>
-        <CardContent className="flex flex-col items-center py-12 text-center">
-          <Hotel className="h-16 w-16 text-muted-foreground/30 mb-4" />
-          <CardHeader className="p-0">
-            <CardTitle className="text-lg">Coming Soon</CardTitle>
-          </CardHeader>
-          <p className="text-sm text-muted-foreground mt-2 max-w-sm">
+      <div className="rounded-2xl bg-card p-8 md:p-12 shadow-sm border border-border/50">
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center justify-center h-20 w-20 rounded-full bg-green-50 mb-6">
+            <Hotel className="h-10 w-10 text-green-600" />
+          </div>
+          <h2 className="text-xl font-semibold mb-2">Coming Soon</h2>
+          <p className="text-sm text-muted-foreground max-w-sm leading-relaxed">
             Hotel search around your destination is planned for Phase 2.
             You can manually add hotel bookings to your trips in the meantime.
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

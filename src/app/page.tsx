@@ -1,26 +1,28 @@
 import Link from 'next/link';
-import { MapPin, Calendar, Receipt, Users, Plane, Map } from 'lucide-react';
+import { MapPin, Calendar, Receipt, Users, Plane, Map, ChevronRight } from 'lucide-react';
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b">
-        <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2">
-            <MapPin className="h-6 w-6 text-primary" />
-            <span className="text-xl font-bold">GoReady</span>
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-border/50">
+        <div className="container mx-auto flex items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-primary text-white">
+              <MapPin className="h-5 w-5" />
+            </div>
+            <span className="text-xl font-semibold tracking-tight">GoReady</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
             >
               Get Started
             </Link>
@@ -30,85 +32,124 @@ export default function LandingPage() {
 
       <main>
         {/* Hero section */}
-        <section className="py-20 px-4 text-center">
-          <div className="container mx-auto max-w-3xl">
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl">
-              Plan Your Perfect Trip,{' '}
-              <span className="text-primary">All in One Place</span>
+        <section className="py-24 px-6 md:py-32 lg:py-40">
+          <div className="container mx-auto max-w-4xl text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8">
+              <Plane className="h-4 w-4" />
+              Your all-in-one trip planner
+            </div>
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1]">
+              Plan your perfect trip,{' '}
+              <span className="text-primary">all in one place</span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Plan day-by-day itineraries, search flights and hotels, track expenses,
-              split costs with friends, and manage all your bookings — from start to
-              finish.
+            <p className="mt-6 text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Create day-by-day itineraries, search flights and hotels, track expenses,
+              split costs with friends, and manage all your bookings.
             </p>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 href="/register"
-                className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground shadow hover:bg-primary/90"
+                className="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3.5 text-base font-medium text-white shadow-md hover:bg-primary/90 hover:shadow-lg transition-all"
               >
-                Start Planning Free
+                Start planning free
+                <ChevronRight className="ml-1 h-4 w-4" />
               </Link>
               <Link
                 href="/login"
-                className="inline-flex items-center justify-center rounded-md border border-input px-8 py-3 text-sm font-medium shadow-sm hover:bg-accent"
+                className="inline-flex items-center justify-center rounded-full border border-border px-8 py-3.5 text-base font-medium hover:bg-muted transition-colors"
               >
-                Sign In
+                Sign in
               </Link>
             </div>
           </div>
         </section>
 
+        {/* Stats section */}
+        <section className="py-16 px-6 bg-muted/50 border-y border-border/50">
+          <div className="container mx-auto max-w-4xl">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+              {[
+                { value: 'Free', label: 'To get started' },
+                { value: '100+', label: 'Countries supported' },
+                { value: '24/7', label: 'Access your plans' },
+                { value: 'Unlimited', label: 'Trip members' },
+              ].map((stat) => (
+                <div key={stat.label}>
+                  <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Features */}
-        <section className="py-16 px-4 bg-muted/30">
-          <div className="container mx-auto max-w-5xl">
-            <h2 className="text-2xl font-bold text-center mb-12">
-              Everything You Need for Your Trip
-            </h2>
-            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <section className="py-20 px-6 md:py-28">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+                Everything you need for your trip
+              </h2>
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+                From planning to budgeting, GoReady helps you organize every detail of your journey.
+              </p>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
                   icon: Calendar,
-                  title: 'Day-by-Day Planner',
+                  title: 'Day-by-day planner',
                   description:
-                    'Organize activities by day with time slots, categories, and notes. Drag to reorder.',
+                    'Organize activities by day with time slots, categories, and notes. Drag to reorder your schedule.',
+                  color: 'bg-blue-50 text-blue-600',
                 },
                 {
                   icon: Plane,
-                  title: 'Search & Book Travel',
+                  title: 'Search & book travel',
                   description:
                     'Search flights, hotels, buses, trains, and ferries. Compare prices and book with providers.',
+                  color: 'bg-red-50 text-red-600',
                 },
                 {
                   icon: Map,
-                  title: 'Maps & Navigation',
+                  title: 'Maps & navigation',
                   description:
                     'See all your activities on Google Maps. Get transport suggestions between stops.',
+                  color: 'bg-green-50 text-green-600',
                 },
                 {
                   icon: Receipt,
-                  title: 'Expense Tracking',
+                  title: 'Expense tracking',
                   description:
-                    'Record every expense, split costs with friends, and see who owes whom.',
+                    'Record every expense, split costs with friends by any ratio, and see who owes whom.',
+                  color: 'bg-yellow-50 text-yellow-700',
                 },
                 {
                   icon: Users,
-                  title: 'Travel Together',
+                  title: 'Travel together',
                   description:
-                    'Invite travel partners, collaborate on itineraries, and share expenses.',
+                    'Invite travel partners, collaborate on itineraries in real-time, and share expenses.',
+                  color: 'bg-purple-50 text-purple-600',
                 },
                 {
                   icon: MapPin,
-                  title: 'Smart Suggestions',
+                  title: 'Smart suggestions',
                   description:
                     'Get restaurant suggestions near activities, with optimal meal-time scheduling.',
+                  color: 'bg-teal-50 text-teal-600',
                 },
               ].map((feature) => (
-                <div key={feature.title} className="text-center p-6">
-                  <div className="inline-flex items-center justify-center h-12 w-12 rounded-full bg-primary/10 mb-4">
-                    <feature.icon className="h-6 w-6 text-primary" />
+                <div
+                  key={feature.title}
+                  className="rounded-2xl bg-card p-8 shadow-sm hover:shadow-md transition-shadow border border-border/50"
+                >
+                  <div
+                    className={`inline-flex items-center justify-center h-12 w-12 rounded-xl ${feature.color} mb-5`}
+                  >
+                    <feature.icon className="h-6 w-6" />
                   </div>
-                  <h3 className="font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">
+                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -116,10 +157,39 @@ export default function LandingPage() {
             </div>
           </div>
         </section>
+
+        {/* CTA section */}
+        <section className="py-20 px-6 md:py-28 bg-primary">
+          <div className="container mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+              Ready to plan your next adventure?
+            </h2>
+            <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto">
+              Join GoReady and start organizing your perfect trip today. It&apos;s free to get started.
+            </p>
+            <div className="mt-8">
+              <Link
+                href="/register"
+                className="inline-flex items-center justify-center rounded-full bg-white px-8 py-3.5 text-base font-medium text-primary shadow-md hover:bg-white/90 transition-colors"
+              >
+                Get started on GoReady
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+        </section>
       </main>
 
-      <footer className="border-t py-8 px-4 text-center text-sm text-muted-foreground">
-        <p>&copy; {new Date().getFullYear()} GoReady. Plan your trip with confidence.</p>
+      <footer className="border-t py-10 px-6 text-center text-sm text-muted-foreground">
+        <div className="container mx-auto">
+          <div className="flex items-center justify-center gap-2.5 mb-4">
+            <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-white">
+              <MapPin className="h-4 w-4" />
+            </div>
+            <span className="font-semibold text-foreground">GoReady</span>
+          </div>
+          <p>&copy; {new Date().getFullYear()} GoReady. Plan your trip with confidence.</p>
+        </div>
       </footer>
     </div>
   );
