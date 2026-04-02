@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { MapPin, Calendar, Receipt, Users, Plane, Map, ChevronRight } from 'lucide-react';
+import { GoReadyLogo } from '@/components/logo';
 
 export default function LandingPage() {
   return (
@@ -8,9 +9,7 @@ export default function LandingPage() {
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-primary text-white">
-              <MapPin className="h-5 w-5" />
-            </div>
+            <GoReadyLogo size={36} />
             <span className="text-xl font-semibold tracking-tight">GoReady</span>
           </div>
           <div className="flex items-center gap-4">
@@ -183,9 +182,7 @@ export default function LandingPage() {
       <footer className="py-10 px-6 text-center text-base text-muted-foreground">
         <div className="container mx-auto">
           <div className="flex items-center justify-center gap-2.5 mb-4">
-            <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-white">
-              <MapPin className="h-4 w-4" />
-            </div>
+            <GoReadyLogo size={28} />
             <span className="font-semibold text-foreground">GoReady</span>
           </div>
           <p>&copy; {new Date().getFullYear()} GoReady. Plan your trip with confidence.</p>

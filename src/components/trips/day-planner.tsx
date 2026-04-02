@@ -3,12 +3,8 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
   Plus,
-  Clock,
   MapPin,
   Utensils,
   Camera,
@@ -18,6 +14,7 @@ import {
   Star,
   Trash2,
   Navigation,
+  Pencil,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ActivityForm } from './activity-form';
@@ -60,18 +57,19 @@ const categoryIcons: Record<string, typeof Camera> = {
 };
 
 const categoryColors: Record<string, string> = {
-  sightseeing: 'bg-blue-50 text-blue-600',
-  meal: 'bg-orange-50 text-orange-600',
-  transport: 'bg-purple-50 text-purple-600',
-  accommodation: 'bg-green-50 text-green-600',
-  shopping: 'bg-pink-50 text-pink-600',
-  entertainment: 'bg-yellow-50 text-yellow-600',
-  other: 'bg-gray-100 text-gray-600',
+  sightseeing: 'bg-blue-500',
+  meal: 'bg-orange-500',
+  transport: 'bg-purple-500',
+  accommodation: 'bg-green-500',
+  shopping: 'bg-pink-500',
+  entertainment: 'bg-yellow-500',
+  other: 'bg-gray-400',
 };
 
 export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }) {
   const [selectedDay, setSelectedDay] = useState(days[0]?.id || '');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const queryClient = useQueryClient();
 
   const { data: daysWithActivities, isLoading } = useQuery({
@@ -100,33 +98,37 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
 
   return (
     <div>
-      {/* Day selector — pill buttons */}
-      <ScrollArea className="w-full whitespace-nowrap mb-6">
-        <div className="flex gap-2 pb-2">
-          {(daysWithActivities || days).map((day) => {
-            const isActive = selectedDay === day.id || (!selectedDay && day.dayNumber === 1);
-            return (
-              <button
-                key={day.id}
-                className={`flex-shrink-0 rounded-full px-6 py-3 text-base font-medium transition-colors ${
-                  isActive
-                    ? 'bg-primary text-white shadow-sm'
-                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
-                }`}
-                onClick={() => setSelectedDay(day.id)}
-              >
-                Day {day.dayNumber}
-                <span className="ml-1.5 text-sm opacity-80">
-                  {format(new Date(day.date), 'MMM d')}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+      {/* Day selector — wrapping pill buttons (no scrollbar) */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {(daysWithActivities || days).map((day) => {
+          const isActive = selectedDay === day.id || (!selectedDay && day.dayNumber === 1);
+          return (
+            <button
+              key={day.id}
+              className={`rounded-full px-5 py-2.5 text-sm font-medium transition-all ${
+                isActive
+                  ? 'bg-primary text-white shadow-sm'
+                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
+              }`}
+              onClick={() => { setSelectedDay(day.id); setShowAddForm(false); setEditingActivity(null); }}
+            >
+              Day {day.dayNumber}
+              <span className="ml-1.5 opacity-80">
+                {format(new Date(day.date), 'MMM d')}
+              </span>
+            </button>
+          );
+        })}
+      </div>
 
-      {/* Activities list */}
+      {/* Date heading */}
+      {currentDay && (
+        <h3 className="text-lg font-semibold mb-6">
+          {format(new Date(currentDay.date), 'EEEE dd MMM')}
+        </h3>
+      )}
+
+      {/* Vertical timeline */}
       {isLoading ? (
         <div className="space-y-4">
           {[1, 2, 3].map((i) => (
@@ -134,88 +136,91 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
           ))}
         </div>
       ) : currentDay && currentDay.activities.length > 0 ? (
-        <div className="space-y-3">
-          {currentDay.activities
-            .sort((a, b) => a.sortOrder - b.sortOrder)
-            .map((activity) => {
-              const Icon = categoryIcons[activity.category] || MapPin;
-              return (
-                <div
-                  key={activity.id}
-                  className="group flex items-start gap-5 rounded-3xl bg-white p-6 shadow-sm hover:shadow-md transition-shadow border-0"
-                >
-                  <div
-                    className={`flex items-center justify-center h-12 w-12 rounded-xl flex-shrink-0 ${
-                      categoryColors[activity.category] || 'bg-gray-100'
-                    }`}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between gap-2">
-                      <div>
-                        <h4 className="text-lg font-semibold">{activity.title}</h4>
-                        {activity.placeName && (
-                          <p className="text-base text-muted-foreground flex items-center gap-1.5 mt-1">
-                            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
-                            <span className="truncate">{activity.placeName}</span>
-                            {activity.googleMapsUrl && (
-                              <a
-                                href={activity.googleMapsUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 text-primary hover:underline flex-shrink-0 ml-1 text-sm font-medium"
-                                onClick={(e) => e.stopPropagation()}
-                              >
-                                <Navigation className="h-3 w-3" />
-                                Map
-                              </a>
-                            )}
-                          </p>
-                        )}
-                        {!activity.placeName && activity.googleMapsUrl && (
-                          <a
-                            href={activity.googleMapsUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 text-[0.9375rem] text-primary hover:underline mt-1"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <Navigation className="h-3.5 w-3.5" />
-                            Open in Google Maps
-                          </a>
-                        )}
+        <div className="relative">
+          {/* Timeline vertical line */}
+          <div className="absolute left-[23px] top-3 bottom-3 w-[3px] bg-primary/80 rounded-full" />
+
+          <div className="space-y-0">
+            {currentDay.activities
+              .sort((a, b) => a.sortOrder - b.sortOrder)
+              .map((activity) => {
+                const Icon = categoryIcons[activity.category] || MapPin;
+                const dotColor = categoryColors[activity.category] || 'bg-gray-400';
+                return (
+                  <div key={activity.id} className="relative flex gap-4 pb-8 last:pb-0">
+                    {/* Timeline dot */}
+                    <div className="relative z-10 flex flex-col items-center flex-shrink-0" style={{ width: '48px' }}>
+                      <div className={`flex items-center justify-center h-[48px] w-[48px] rounded-full ${dotColor} text-white shadow-sm`}>
+                        <Icon className="h-5 w-5" />
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="icon-sm"
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => deleteActivity.mutate(activity.id)}
-                      >
-                        <Trash2 className="h-4 w-4 text-destructive" />
-                      </Button>
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 mt-2.5">
+
+                    {/* Content card */}
+                    <div className="flex-1 min-w-0 group pt-0.5">
+                      {/* Time */}
                       {activity.startTime && (
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-sm text-muted-foreground">
-                          <Clock className="h-3 w-3" />
+                        <p className="text-sm font-semibold text-foreground mb-1">
                           {activity.startTime}
-                          {activity.endTime && ` - ${activity.endTime}`}
-                        </span>
+                          {activity.endTime && (
+                            <span className="text-muted-foreground font-normal"> — {activity.endTime}</span>
+                          )}
+                        </p>
                       )}
-                      <Badge variant="secondary" className="capitalize">
-                        {activity.category}
-                      </Badge>
+
+                      {/* Title */}
+                      <h4 className="text-base font-semibold leading-snug">{activity.title}</h4>
+
+                      {/* Place / address */}
+                      {activity.placeName && (
+                        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
+                          {activity.placeName}
+                          {activity.address && `, ${activity.address}`}
+                        </p>
+                      )}
+
+                      {/* Google Maps link */}
+                      {activity.googleMapsUrl && (
+                        <a
+                          href={activity.googleMapsUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-1"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <Navigation className="h-3 w-3" />
+                          Open in Maps
+                        </a>
+                      )}
+
+                      {/* Notes */}
+                      {activity.notes && (
+                        <p className="text-sm text-muted-foreground mt-1.5 leading-relaxed">
+                          {activity.notes}
+                        </p>
+                      )}
+
+                      {/* Action buttons */}
+                      <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <button
+                          className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                          onClick={() => { setEditingActivity(activity); setShowAddForm(false); }}
+                        >
+                          <Pencil className="h-3 w-3" />
+                          Edit
+                        </button>
+                        <button
+                          className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                          onClick={() => deleteActivity.mutate(activity.id)}
+                        >
+                          <Trash2 className="h-3 w-3" />
+                          Delete
+                        </button>
+                      </div>
                     </div>
-                    {activity.notes && (
-                      <p className="text-[0.9375rem] text-muted-foreground mt-2 leading-relaxed">
-                        {activity.notes}
-                      </p>
-                    )}
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+          </div>
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -226,27 +231,47 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
         </div>
       )}
 
-      {/* Add activity */}
-      {showAddForm && currentDay ? (
-        <div className="mt-5">
+      {/* Edit activity form */}
+      {editingActivity && currentDay && (
+        <div className="mt-6">
           <ActivityForm
             tripId={tripId}
             dayId={currentDay.id}
-            onClose={() => setShowAddForm(false)}
+            activity={editingActivity}
+            onClose={() => setEditingActivity(null)}
             onSuccess={() => {
-              setShowAddForm(false);
+              setEditingActivity(null);
               queryClient.invalidateQueries({ queryKey: ['itinerary', tripId] });
             }}
           />
         </div>
-      ) : (
-        <button
-          className="w-full mt-5 flex items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-border py-5 text-base font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-          onClick={() => setShowAddForm(true)}
-        >
-          <Plus className="h-4 w-4" />
-          Add Activity
-        </button>
+      )}
+
+      {/* Add activity */}
+      {!editingActivity && (
+        <>
+          {showAddForm && currentDay ? (
+            <div className="mt-6">
+              <ActivityForm
+                tripId={tripId}
+                dayId={currentDay.id}
+                onClose={() => setShowAddForm(false)}
+                onSuccess={() => {
+                  setShowAddForm(false);
+                  queryClient.invalidateQueries({ queryKey: ['itinerary', tripId] });
+                }}
+              />
+            </div>
+          ) : (
+            <button
+              className="w-full mt-6 flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-border py-4 text-base font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+              onClick={() => setShowAddForm(true)}
+            >
+              <Plus className="h-4 w-4" />
+              Add Activity
+            </button>
+          )}
+        </>
       )}
     </div>
   );

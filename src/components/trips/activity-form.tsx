@@ -24,22 +24,37 @@ function buildGoogleMapsUrl(placeName: string, address: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
+interface ActivityData {
+  id: string;
+  title: string;
+  category: string;
+  startTime: string | null;
+  endTime: string | null;
+  placeName: string | null;
+  address: string | null;
+  googleMapsUrl: string | null;
+  notes: string | null;
+}
+
 interface Props {
   tripId: string;
   dayId: string;
+  activity?: ActivityData;
   onClose: () => void;
   onSuccess: () => void;
 }
 
-export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
-  const [title, setTitle] = useState('');
-  const [category, setCategory] = useState('sightseeing');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [placeName, setPlaceName] = useState('');
-  const [address, setAddress] = useState('');
-  const [googleMapsUrl, setGoogleMapsUrl] = useState('');
-  const [notes, setNotes] = useState('');
+export function ActivityForm({ tripId, dayId, activity, onClose, onSuccess }: Props) {
+  const [title, setTitle] = useState(activity?.title || '');
+  const [category, setCategory] = useState(activity?.category || 'sightseeing');
+  const [startTime, setStartTime] = useState(activity?.startTime || '');
+  const [endTime, setEndTime] = useState(activity?.endTime || '');
+  const [placeName, setPlaceName] = useState(activity?.placeName || '');
+  const [address, setAddress] = useState(activity?.address || '');
+  const [googleMapsUrl, setGoogleMapsUrl] = useState(activity?.googleMapsUrl || '');
+  const [notes, setNotes] = useState(activity?.notes || '');
+
+  const isEditing = !!activity;
 
   useEffect(() => {
     if ((placeName || address) && !googleMapsUrl.startsWith('https://www.google.com/maps/place/')) {
@@ -47,9 +62,9 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
     }
   }, [placeName, address]);
 
-  const createActivity = useMutation({
+  const saveActivity = useMutation({
     mutationFn: async () => {
-      const res = await api.post(`/api/trips/${tripId}/days/${dayId}/activities`, {
+      const payload = {
         title,
         category,
         startTime: startTime || null,
@@ -58,11 +73,18 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
         address: address || null,
         googleMapsUrl: googleMapsUrl || null,
         notes: notes || null,
-      });
-      if (!res.success) throw new Error(res.error);
+      };
+
+      if (isEditing) {
+        const res = await api.put(`/api/trips/${tripId}/activities/${activity.id}`, payload);
+        if (!res.success) throw new Error(res.error);
+      } else {
+        const res = await api.post(`/api/trips/${tripId}/days/${dayId}/activities`, payload);
+        if (!res.success) throw new Error(res.error);
+      }
     },
     onSuccess: () => {
-      toast.success('Activity added!');
+      toast.success(isEditing ? 'Activity updated!' : 'Activity added!');
       onSuccess();
     },
     onError: (err: Error) => toast.error(err.message),
@@ -70,13 +92,13 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    createActivity.mutate();
+    saveActivity.mutate();
   };
 
   return (
     <div className="rounded-3xl bg-white p-8 shadow-md border-0">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-medium">Add Activity</h3>
+        <h3 className="text-xl font-medium">{isEditing ? 'Edit Activity' : 'Add Activity'}</h3>
         <button
           className="flex items-center justify-center h-8 w-8 rounded-full hover:bg-muted transition-colors"
           onClick={onClose}
@@ -197,8 +219,8 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
           <Button type="button" variant="outline" className="flex-1 h-12 rounded-full" onClick={onClose}>
             Cancel
           </Button>
-          <Button type="submit" className="flex-1 h-12 rounded-full" disabled={createActivity.isPending}>
-            {createActivity.isPending ? 'Adding...' : 'Add Activity'}
+          <Button type="submit" className="flex-1 h-12 rounded-full" disabled={saveActivity.isPending}>
+            {saveActivity.isPending ? (isEditing ? 'Saving...' : 'Adding...') : (isEditing ? 'Save Changes' : 'Add Activity')}
           </Button>
         </div>
       </form>

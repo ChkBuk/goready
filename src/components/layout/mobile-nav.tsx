@@ -2,25 +2,33 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Map, Search, Receipt, User } from 'lucide-react';
+import { Map, Receipt, Ticket, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
-
-const navItems = [
-  { href: '/dashboard', label: 'Trips', icon: Map },
-  { href: '/search/flights', label: 'Search', icon: Search },
-  { href: '/dashboard', label: 'Expenses', icon: Receipt },
-  { href: '/profile', label: 'Profile', icon: User },
-];
 
 export function MobileNav() {
   const pathname = usePathname();
+
+  // Detect if we're inside a trip context
+  const tripMatch = pathname.match(/^\/trips\/([^/]+)/);
+  const tripId = tripMatch ? tripMatch[1] : null;
+
+  const navItems = tripId
+    ? [
+        { href: '/dashboard', label: 'Trips', icon: Map },
+        { href: `/trips/${tripId}`, label: 'Itinerary', icon: Map },
+        { href: `/trips/${tripId}/expenses`, label: 'Expenses', icon: Receipt },
+        { href: `/trips/${tripId}/bookings`, label: 'Bookings', icon: Ticket },
+      ]
+    : [
+        { href: '/dashboard', label: 'Trips', icon: Map },
+        { href: '/profile', label: 'Profile', icon: User },
+      ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-50 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] bg-white md:hidden">
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
-          const isActive =
-            pathname === item.href || pathname.startsWith(item.href + '/');
+          const isActive = pathname === item.href;
           return (
             <Link
               key={item.label}

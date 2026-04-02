@@ -4,14 +4,13 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Receipt, ArrowRight } from 'lucide-react';
+import { ArrowLeft, Plus, Receipt, ArrowRight, Pencil, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -55,7 +54,8 @@ export default function TripExpensesPage() {
   const params = useParams();
   const tripId = params.tripId as string;
   const queryClient = useQueryClient();
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [category, setCategory] = useState('food');
@@ -81,27 +81,62 @@ export default function TripExpensesPage() {
     },
   });
 
-  const addExpense = useMutation({
+  const saveExpense = useMutation({
     mutationFn: async () => {
-      const res = await api.post(`/api/trips/${tripId}/expenses`, {
+      const payload = {
         title,
         amount: parseFloat(amount),
         category,
         date: expenseDate,
         splitType: 'equal',
-      });
-      if (!res.success) throw new Error(res.error);
+      };
+      if (editingExpense) {
+        const res = await api.put(`/api/trips/${tripId}/expenses/${editingExpense.id}`, payload);
+        if (!res.success) throw new Error(res.error);
+      } else {
+        const res = await api.post(`/api/trips/${tripId}/expenses`, payload);
+        if (!res.success) throw new Error(res.error);
+      }
     },
     onSuccess: () => {
-      toast.success('Expense added!');
-      setTitle('');
-      setAmount('');
-      setShowAddForm(false);
+      toast.success(editingExpense ? 'Expense updated!' : 'Expense added!');
+      resetForm();
       queryClient.invalidateQueries({ queryKey: ['expenses', tripId] });
       queryClient.invalidateQueries({ queryKey: ['balances', tripId] });
     },
     onError: (err: Error) => toast.error(err.message),
   });
+
+  const deleteExpense = useMutation({
+    mutationFn: async (expenseId: string) => {
+      const res = await api.delete(`/api/trips/${tripId}/expenses/${expenseId}`);
+      if (!res.success) throw new Error(res.error as string);
+    },
+    onSuccess: () => {
+      toast.success('Expense deleted');
+      queryClient.invalidateQueries({ queryKey: ['expenses', tripId] });
+      queryClient.invalidateQueries({ queryKey: ['balances', tripId] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  function resetForm() {
+    setTitle('');
+    setAmount('');
+    setCategory('food');
+    setExpenseDate(new Date().toISOString().split('T')[0]);
+    setShowForm(false);
+    setEditingExpense(null);
+  }
+
+  function startEdit(expense: Expense) {
+    setEditingExpense(expense);
+    setTitle(expense.title);
+    setAmount(expense.amount);
+    setCategory(expense.category);
+    setExpenseDate(expense.date?.split('T')[0] || new Date().toISOString().split('T')[0]);
+    setShowForm(true);
+  }
 
   const total = (expenses || []).reduce(
     (sum, e) => sum + parseFloat(e.amount),
@@ -147,14 +182,20 @@ export default function TripExpensesPage() {
         </Card>
       )}
 
-      {/* Add expense form */}
-      {showAddForm ? (
+      {/* Add/Edit expense form */}
+      {showForm ? (
         <Card className="mb-4">
           <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-medium">{editingExpense ? 'Edit Expense' : 'Add Expense'}</h3>
+              <button onClick={resetForm} className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-muted">
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                addExpense.mutate();
+                saveExpense.mutate();
               }}
               className="space-y-3"
             >
@@ -186,7 +227,6 @@ export default function TripExpensesPage() {
                   <Label htmlFor="expCategory">Category</Label>
                   <select
                     id="expCategory"
-                    className=""
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
@@ -213,16 +253,16 @@ export default function TripExpensesPage() {
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={resetForm}
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   className="flex-1"
-                  disabled={addExpense.isPending}
+                  disabled={saveExpense.isPending}
                 >
-                  {addExpense.isPending ? 'Adding...' : 'Add Expense'}
+                  {saveExpense.isPending ? 'Saving...' : (editingExpense ? 'Save Changes' : 'Add Expense')}
                 </Button>
               </div>
             </form>
@@ -232,7 +272,7 @@ export default function TripExpensesPage() {
         <Button
           variant="outline"
           className="w-full mb-4"
-          onClick={() => setShowAddForm(true)}
+          onClick={() => { setEditingExpense(null); setShowForm(true); }}
         >
           <Plus className="mr-2 h-4 w-4" />
           Add Expense
@@ -243,7 +283,7 @@ export default function TripExpensesPage() {
       {expenses && expenses.length > 0 ? (
         <div className="space-y-2">
           {expenses.map((expense) => (
-            <Card key={expense.id}>
+            <Card key={expense.id} className="group">
               <CardContent className="flex items-center gap-3 p-5">
                 <div className="flex items-center justify-center h-10 w-10 rounded-full bg-muted">
                   <Receipt className="h-5 w-5 text-muted-foreground" />
@@ -254,13 +294,29 @@ export default function TripExpensesPage() {
                     {format(new Date(expense.date), 'MMM d, yyyy')}
                   </p>
                 </div>
-                <div className="text-right">
-                  <p className="text-lg font-semibold">
-                    ${parseFloat(expense.amount).toFixed(2)}
-                  </p>
-                  <Badge variant="secondary" className="mt-0.5">
-                    {categoryLabels[expense.category] || expense.category}
-                  </Badge>
+                <div className="text-right flex items-center gap-2">
+                  <div>
+                    <p className="text-lg font-semibold">
+                      ${parseFloat(expense.amount).toFixed(2)}
+                    </p>
+                    <Badge variant="secondary" className="mt-0.5">
+                      {categoryLabels[expense.category] || expense.category}
+                    </Badge>
+                  </div>
+                  <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button
+                      className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-muted"
+                      onClick={() => startEdit(expense)}
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                    </button>
+                    <button
+                      className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-destructive/10"
+                      onClick={() => deleteExpense.mutate(expense.id)}
+                    >
+                      <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                    </button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

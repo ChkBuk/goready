@@ -79,7 +79,7 @@ fi
 
 # ── Push database schema ──
 echo -e "${GREEN}Pushing database schema...${NC}"
-cd server && DATABASE_URL="$DB_URL" npx drizzle-kit push --force 2>&1 | tail -3
+cd server && yes | DATABASE_URL="$DB_URL" npx drizzle-kit push --force 2>&1 | tail -3
 cd "$ROOT_DIR"
 
 # ── Start both servers ──

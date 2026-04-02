@@ -108,21 +108,6 @@ export default function TripDetailPage() {
           <TabsTrigger value="members">Members</TabsTrigger>
         </TabsList>
 
-        <div className="flex gap-2 mt-3">
-          <Link
-            href={`/trips/${tripId}/expenses`}
-            className="inline-flex items-center justify-center rounded-full border border-border h-11 px-6 text-base font-medium hover:bg-muted transition-colors"
-          >
-            Expenses
-          </Link>
-          <Link
-            href={`/trips/${tripId}/bookings`}
-            className="inline-flex items-center justify-center rounded-full border border-border h-11 px-6 text-base font-medium hover:bg-muted transition-colors"
-          >
-            Bookings
-          </Link>
-        </div>
-
         <TabsContent value="itinerary" className="mt-6">
           <DayPlanner tripId={tripId} days={trip.days} />
         </TabsContent>

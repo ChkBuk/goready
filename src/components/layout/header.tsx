@@ -1,6 +1,7 @@
 'use client';
 
-import { MapPin, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react';
+import { GoReadyLogo } from '@/components/logo';
 import { useAuth } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -26,9 +27,7 @@ export function Header() {
     <header className="sticky top-0 z-40 shadow-sm bg-white md:hidden">
       <div className="flex h-16 items-center justify-between px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-white">
-            <MapPin className="h-4 w-4" />
-          </div>
+          <GoReadyLogo size={28} />
           <span className="font-semibold">GoReady</span>
         </Link>
 

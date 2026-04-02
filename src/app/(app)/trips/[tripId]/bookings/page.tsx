@@ -4,14 +4,13 @@ import { useState } from 'react';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Plus, Plane, Hotel, Bus, Train, Ship, Car, Ticket } from 'lucide-react';
+import { ArrowLeft, Plus, Plane, Hotel, Bus, Train, Ship, Car, Ticket, Pencil, Trash2, X } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/lib/utils';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
 
@@ -44,7 +43,8 @@ export default function TripBookingsPage() {
   const params = useParams();
   const tripId = params.tripId as string;
   const queryClient = useQueryClient();
-  const [showAddForm, setShowAddForm] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [type, setType] = useState('flight');
   const [provider, setProvider] = useState('');
   const [confirmationNo, setConfirmationNo] = useState('');
@@ -61,9 +61,9 @@ export default function TripBookingsPage() {
     },
   });
 
-  const addBooking = useMutation({
+  const saveBooking = useMutation({
     mutationFn: async () => {
-      const res = await api.post(`/api/trips/${tripId}/bookings`, {
+      const payload = {
         type,
         provider: provider || null,
         confirmationNo: confirmationNo || null,
@@ -71,22 +71,58 @@ export default function TripBookingsPage() {
         destination: destination || null,
         departureAt: departureAt ? new Date(departureAt).toISOString() : null,
         cost: cost ? parseFloat(cost) : null,
-      });
-      if (!res.success) throw new Error(res.error);
+      };
+      if (editingBooking) {
+        const res = await api.put(`/api/trips/${tripId}/bookings/${editingBooking.id}`, payload);
+        if (!res.success) throw new Error(res.error);
+      } else {
+        const res = await api.post(`/api/trips/${tripId}/bookings`, payload);
+        if (!res.success) throw new Error(res.error);
+      }
     },
     onSuccess: () => {
-      toast.success('Booking added!');
-      setShowAddForm(false);
-      setProvider('');
-      setConfirmationNo('');
-      setOrigin('');
-      setDestination('');
-      setDepartureAt('');
-      setCost('');
+      toast.success(editingBooking ? 'Booking updated!' : 'Booking added!');
+      resetForm();
       queryClient.invalidateQueries({ queryKey: ['bookings', tripId] });
     },
     onError: (err: Error) => toast.error(err.message),
   });
+
+  const deleteBooking = useMutation({
+    mutationFn: async (bookingId: string) => {
+      const res = await api.delete(`/api/trips/${tripId}/bookings/${bookingId}`);
+      if (!res.success) throw new Error(res.error as string);
+    },
+    onSuccess: () => {
+      toast.success('Booking deleted');
+      queryClient.invalidateQueries({ queryKey: ['bookings', tripId] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  function resetForm() {
+    setShowForm(false);
+    setEditingBooking(null);
+    setType('flight');
+    setProvider('');
+    setConfirmationNo('');
+    setOrigin('');
+    setDestination('');
+    setDepartureAt('');
+    setCost('');
+  }
+
+  function startEdit(booking: Booking) {
+    setEditingBooking(booking);
+    setType(booking.type);
+    setProvider(booking.provider || '');
+    setConfirmationNo(booking.confirmationNo || '');
+    setOrigin(booking.origin || '');
+    setDestination(booking.destination || '');
+    setDepartureAt(booking.departureAt ? booking.departureAt.slice(0, 16) : '');
+    setCost(booking.cost || '');
+    setShowForm(true);
+  }
 
   return (
     <div className="px-6 py-6 md:px-10 md:py-10 max-w-2xl mx-auto">
@@ -99,20 +135,25 @@ export default function TripBookingsPage() {
         <h1 className="text-2xl font-medium tracking-tight">Bookings</h1>
       </div>
 
-      {showAddForm ? (
+      {showForm ? (
         <Card className="mb-4">
           <CardContent className="p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-base font-medium">{editingBooking ? 'Edit Booking' : 'Add Booking'}</h3>
+              <button onClick={resetForm} className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-muted">
+                <X className="h-4 w-4 text-muted-foreground" />
+              </button>
+            </div>
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                addBooking.mutate();
+                saveBooking.mutate();
               }}
               className="space-y-3"
             >
               <div className="space-y-1.5">
                 <Label>Type</Label>
                 <select
-                  className=""
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                 >
@@ -186,12 +227,12 @@ export default function TripBookingsPage() {
                   type="button"
                   variant="outline"
                   className="flex-1"
-                  onClick={() => setShowAddForm(false)}
+                  onClick={resetForm}
                 >
                   Cancel
                 </Button>
-                <Button type="submit" className="flex-1" disabled={addBooking.isPending}>
-                  {addBooking.isPending ? 'Adding...' : 'Add Booking'}
+                <Button type="submit" className="flex-1" disabled={saveBooking.isPending}>
+                  {saveBooking.isPending ? 'Saving...' : (editingBooking ? 'Save Changes' : 'Add Booking')}
                 </Button>
               </div>
             </form>
@@ -201,7 +242,7 @@ export default function TripBookingsPage() {
         <Button
           variant="outline"
           className="w-full mb-4"
-          onClick={() => setShowAddForm(true)}
+          onClick={() => { setEditingBooking(null); setShowForm(true); }}
         >
           <Plus className="mr-2 h-4 w-4" />
           Add Booking
@@ -213,7 +254,7 @@ export default function TripBookingsPage() {
           {bookings.map((booking) => {
             const Icon = typeIcons[booking.type] || Ticket;
             return (
-              <Card key={booking.id}>
+              <Card key={booking.id} className="group">
                 <CardContent className="flex items-center gap-3 p-5">
                   <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10">
                     <Icon className="h-5 w-5 text-primary" />
@@ -236,15 +277,31 @@ export default function TripBookingsPage() {
                       )}
                     </div>
                   </div>
-                  <div className="text-right">
-                    {booking.cost && (
-                      <p className="font-semibold text-base">
-                        ${parseFloat(booking.cost).toFixed(2)}
-                      </p>
-                    )}
-                    <Badge variant="secondary">
-                      {booking.status}
-                    </Badge>
+                  <div className="text-right flex items-center gap-2">
+                    <div>
+                      {booking.cost && (
+                        <p className="font-semibold text-base">
+                          ${parseFloat(booking.cost).toFixed(2)}
+                        </p>
+                      )}
+                      <Badge variant="secondary">
+                        {booking.status}
+                      </Badge>
+                    </div>
+                    <div className="flex flex-col gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button
+                        className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-muted"
+                        onClick={() => startEdit(booking)}
+                      >
+                        <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                      </button>
+                      <button
+                        className="h-7 w-7 flex items-center justify-center rounded-full hover:bg-destructive/10"
+                        onClick={() => deleteBooking.mutate(booking.id)}
+                      >
+                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                      </button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
