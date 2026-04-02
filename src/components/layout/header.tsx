@@ -23,8 +23,8 @@ export function Header() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/50 bg-white md:hidden">
-      <div className="flex h-14 items-center justify-between px-4">
+    <header className="sticky top-0 z-40 shadow-sm bg-white md:hidden">
+      <div className="flex h-16 items-center justify-between px-4">
         <Link href="/dashboard" className="flex items-center gap-2">
           <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-white">
             <MapPin className="h-4 w-4" />
@@ -48,16 +48,16 @@ export function Header() {
           </Button>
 
           {menuOpen && (
-            <div className="absolute right-0 top-full mt-2 w-44 rounded-xl border border-border/50 bg-white p-1.5 shadow-lg">
+            <div className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-white p-1.5 shadow-lg border-0">
               <Link
                 href="/profile"
-                className="block rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors"
+                className="block rounded-lg px-4 py-3 text-base font-medium hover:bg-muted transition-colors"
                 onClick={() => setMenuOpen(false)}
               >
                 Profile
               </Link>
               <button
-                className="flex w-full items-center rounded-lg px-3 py-2.5 text-sm font-medium hover:bg-muted transition-colors"
+                className="flex w-full items-center rounded-lg px-4 py-3 text-base font-medium hover:bg-muted transition-colors"
                 onClick={() => {
                   setMenuOpen(false);
                   logout();

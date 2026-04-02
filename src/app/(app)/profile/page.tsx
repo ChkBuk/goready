@@ -31,10 +31,10 @@ export default function ProfilePage() {
   });
 
   return (
-    <div className="px-5 py-8 md:px-10 max-w-lg mx-auto">
-      <h1 className="text-2xl md:text-3xl font-bold tracking-tight mb-8">Profile</h1>
+    <div className="px-6 py-6 md:px-10 md:py-10 max-w-lg mx-auto">
+      <h1 className="text-3xl md:text-4xl font-medium tracking-tight mb-8">Profile</h1>
 
-      <div className="rounded-2xl bg-card p-6 shadow-sm border border-border/50 mb-6">
+      <div className="rounded-3xl bg-white p-8 shadow-md border-0 mb-6">
         <div className="flex items-center gap-5">
           <ImageUpload
             value={avatarUrl}
@@ -42,20 +42,20 @@ export default function ProfilePage() {
             variant="avatar"
           />
           <div>
-            <p className="text-lg font-semibold">{user?.name}</p>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
+            <p className="text-xl font-semibold">{user?.name}</p>
+            <p className="text-base text-muted-foreground">{user?.email}</p>
           </div>
         </div>
       </div>
 
-      <div className="rounded-2xl bg-card p-6 md:p-8 shadow-sm border border-border/50">
-        <h2 className="text-base font-semibold mb-5">Edit Profile</h2>
+      <div className="rounded-3xl bg-white p-8 shadow-md border-0">
+        <h2 className="text-lg font-medium mb-5">Edit Profile</h2>
         <form
           onSubmit={(e) => {
             e.preventDefault();
             updateProfile.mutate();
           }}
-          className="space-y-5"
+          className="space-y-6"
         >
           <div className="space-y-2">
             <Label htmlFor="profileName">Name</Label>
@@ -71,7 +71,7 @@ export default function ProfilePage() {
             <Label htmlFor="profileCurrency">Default Currency</Label>
             <select
               id="profileCurrency"
-              className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm"
+              className=""
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
             >
@@ -92,7 +92,7 @@ export default function ProfilePage() {
 
       <Separator className="my-8" />
 
-      <Button variant="destructive" onClick={logout} className="w-full rounded-full h-11">
+      <Button variant="destructive" onClick={logout} className="w-full rounded-full h-12">
         <LogOut className="mr-2 h-4 w-4" />
         Sign Out
       </Button>

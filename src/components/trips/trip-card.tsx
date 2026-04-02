@@ -29,33 +29,33 @@ export function TripCard({ trip }: { trip: Trip }) {
 
   return (
     <Link href={`/trips/${trip.id}`}>
-      <div className="overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-md transition-all cursor-pointer">
-        <div className="h-40 bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center overflow-hidden">
+      <div className="overflow-hidden rounded-3xl bg-white shadow-md hover:shadow-lg transition-all cursor-pointer border-0">
+        <div className="h-48 bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center overflow-hidden">
           {trip.coverImage ? (
             <img src={trip.coverImage} alt={trip.title} className="h-full w-full object-cover" />
           ) : (
             <MapPin className="h-12 w-12 text-primary/30" />
           )}
         </div>
-        <div className="p-5">
+        <div className="p-6">
           <div className="flex items-start justify-between gap-2 mb-3">
-            <h3 className="font-semibold text-base truncate">{trip.title}</h3>
+            <h3 className="text-lg font-semibold truncate">{trip.title}</h3>
             <Badge variant="secondary" className={statusColors[trip.status] || ''}>
               {trip.status}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground mb-1.5">
-            <MapPin className="h-4 w-4 flex-shrink-0" />
+          <div className="flex items-center gap-2.5 text-base text-muted-foreground mb-1.5">
+            <MapPin className="h-[18px] w-[18px] flex-shrink-0" />
             <span className="truncate">{trip.destination}</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Calendar className="h-4 w-4 flex-shrink-0" />
+          <div className="flex items-center gap-2.5 text-base text-muted-foreground">
+            <Calendar className="h-[18px] w-[18px] flex-shrink-0" />
             <span>
               {format(start, 'MMM d')} - {format(end, 'MMM d, yyyy')} ({days} days)
             </span>
           </div>
           {trip.myRole !== 'owner' && (
-            <Badge variant="outline" className="mt-3 text-xs">
+            <Badge variant="outline" className="mt-3">
               {trip.myRole}
             </Badge>
           )}

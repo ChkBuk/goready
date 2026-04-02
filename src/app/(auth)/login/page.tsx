@@ -40,7 +40,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-muted/30">
-      <div className="w-full max-w-md rounded-2xl bg-card p-8 md:p-10 shadow-lg border border-border/50">
+      <div className="w-full max-w-lg rounded-3xl bg-white p-10 md:p-12 shadow-lg border-0">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="flex items-center gap-2.5">
@@ -50,14 +50,14 @@ export default function LoginPage() {
               <span className="text-2xl font-semibold tracking-tight">GoReady</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold">Welcome back</h1>
-          <p className="text-muted-foreground mt-1">Sign in to continue planning your trips</p>
+          <h1 className="text-2xl font-medium">Welcome back</h1>
+          <p className="text-base text-muted-foreground mt-1">Sign in to continue planning your trips</p>
         </div>
 
         <button
           type="button"
           onClick={handleGoogleLogin}
-          className="flex w-full items-center justify-center gap-3 rounded-full border border-border px-4 py-3 text-sm font-medium hover:bg-muted/80 transition-colors mb-6"
+          className="flex w-full items-center justify-center gap-3 rounded-full border border-border h-12 px-4 text-base font-medium hover:bg-muted/80 transition-colors mb-6"
         >
           <svg className="h-5 w-5" viewBox="0 0 24 24">
             <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
@@ -75,7 +75,7 @@ export default function LoginPage() {
           </span>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="rounded-xl bg-destructive/10 p-4 text-sm text-destructive">
               {error}
@@ -106,12 +106,12 @@ export default function LoginPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full rounded-full h-11" disabled={isSubmitting}>
+          <Button type="submit" className="w-full rounded-full h-12" disabled={isSubmitting}>
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-base text-muted-foreground">
           Don&apos;t have an account?{' '}
           <Link href="/register" className="text-primary hover:underline font-medium">
             Sign up

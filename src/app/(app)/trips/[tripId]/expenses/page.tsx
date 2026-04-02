@@ -109,17 +109,17 @@ export default function TripExpensesPage() {
   );
 
   return (
-    <div className="px-5 py-8 md:px-10 max-w-2xl mx-auto">
-      <Link href={`/trips/${tripId}`} className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
+    <div className="px-6 py-6 md:px-10 md:py-10 max-w-2xl mx-auto">
+      <Link href={`/trips/${tripId}`} className="inline-flex items-center text-base font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
         <ArrowLeft className="mr-1.5 h-4 w-4" />
         Back to Trip
       </Link>
 
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold tracking-tight">Expenses</h1>
+        <h1 className="text-2xl font-medium tracking-tight">Expenses</h1>
         <div className="text-right">
-          <p className="text-2xl font-bold">${total.toFixed(2)}</p>
-          <p className="text-xs text-muted-foreground">Total spent</p>
+          <p className="text-3xl font-medium">${total.toFixed(2)}</p>
+          <p className="text-base text-muted-foreground">Total spent</p>
         </div>
       </div>
 
@@ -127,13 +127,13 @@ export default function TripExpensesPage() {
       {balances?.settlements && balances.settlements.length > 0 && (
         <Card className="mb-4">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm">Settle Up</CardTitle>
+            <CardTitle className="text-base">Settle Up</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             {balances.settlements.map((s, i) => (
               <div
                 key={i}
-                className="flex items-center gap-2 text-sm"
+                className="flex items-center gap-2 text-[0.9375rem]"
               >
                 <span className="font-medium">{s.fromName}</span>
                 <ArrowRight className="h-3.5 w-3.5 text-muted-foreground" />
@@ -186,7 +186,7 @@ export default function TripExpensesPage() {
                   <Label htmlFor="expCategory">Category</Label>
                   <select
                     id="expCategory"
-                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                    className=""
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                   >
@@ -244,21 +244,21 @@ export default function TripExpensesPage() {
         <div className="space-y-2">
           {expenses.map((expense) => (
             <Card key={expense.id}>
-              <CardContent className="flex items-center gap-3 p-4">
-                <div className="flex items-center justify-center h-9 w-9 rounded-full bg-muted">
-                  <Receipt className="h-4 w-4 text-muted-foreground" />
+              <CardContent className="flex items-center gap-3 p-5">
+                <div className="flex items-center justify-center h-10 w-10 rounded-full bg-muted">
+                  <Receipt className="h-5 w-5 text-muted-foreground" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-medium text-sm truncate">{expense.title}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-base font-medium truncate">{expense.title}</p>
+                  <p className="text-sm text-muted-foreground">
                     {format(new Date(expense.date), 'MMM d, yyyy')}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="font-semibold text-sm">
+                  <p className="text-lg font-semibold">
                     ${parseFloat(expense.amount).toFixed(2)}
                   </p>
-                  <Badge variant="secondary" className="text-xs mt-0.5">
+                  <Badge variant="secondary" className="mt-0.5">
                     {categoryLabels[expense.category] || expense.category}
                   </Badge>
                 </div>

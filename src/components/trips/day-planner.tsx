@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import {
@@ -18,7 +17,6 @@ import {
   ShoppingBag,
   Star,
   Trash2,
-  GripVertical,
   Navigation,
 } from 'lucide-react';
 import { format } from 'date-fns';
@@ -62,13 +60,13 @@ const categoryIcons: Record<string, typeof Camera> = {
 };
 
 const categoryColors: Record<string, string> = {
-  sightseeing: 'bg-blue-100 text-blue-700',
-  meal: 'bg-orange-100 text-orange-700',
-  transport: 'bg-purple-100 text-purple-700',
-  accommodation: 'bg-green-100 text-green-700',
-  shopping: 'bg-pink-100 text-pink-700',
-  entertainment: 'bg-yellow-100 text-yellow-700',
-  other: 'bg-gray-100 text-gray-700',
+  sightseeing: 'bg-blue-50 text-blue-600',
+  meal: 'bg-orange-50 text-orange-600',
+  transport: 'bg-purple-50 text-purple-600',
+  accommodation: 'bg-green-50 text-green-600',
+  shopping: 'bg-pink-50 text-pink-600',
+  entertainment: 'bg-yellow-50 text-yellow-600',
+  other: 'bg-gray-100 text-gray-600',
 };
 
 export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }) {
@@ -102,32 +100,37 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
 
   return (
     <div>
-      {/* Day selector — horizontal scroll on mobile */}
-      <ScrollArea className="w-full whitespace-nowrap mb-4">
+      {/* Day selector — pill buttons */}
+      <ScrollArea className="w-full whitespace-nowrap mb-6">
         <div className="flex gap-2 pb-2">
-          {(daysWithActivities || days).map((day) => (
-            <Button
-              key={day.id}
-              variant={selectedDay === day.id || (!selectedDay && day.dayNumber === 1) ? 'default' : 'outline'}
-              size="sm"
-              className="flex-shrink-0"
-              onClick={() => setSelectedDay(day.id)}
-            >
-              <span className="font-medium">Day {day.dayNumber}</span>
-              <span className="ml-1.5 text-xs opacity-70">
-                {format(new Date(day.date), 'MMM d')}
-              </span>
-            </Button>
-          ))}
+          {(daysWithActivities || days).map((day) => {
+            const isActive = selectedDay === day.id || (!selectedDay && day.dayNumber === 1);
+            return (
+              <button
+                key={day.id}
+                className={`flex-shrink-0 rounded-full px-6 py-3 text-base font-medium transition-colors ${
+                  isActive
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
+                onClick={() => setSelectedDay(day.id)}
+              >
+                Day {day.dayNumber}
+                <span className="ml-1.5 text-sm opacity-80">
+                  {format(new Date(day.date), 'MMM d')}
+                </span>
+              </button>
+            );
+          })}
         </div>
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
       {/* Activities list */}
       {isLoading ? (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-20 rounded-lg bg-muted animate-pulse" />
+            <div key={i} className="h-24 rounded-2xl bg-muted/50 animate-pulse" />
           ))}
         </div>
       ) : currentDay && currentDay.activities.length > 0 ? (
@@ -137,95 +140,95 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
             .map((activity) => {
               const Icon = categoryIcons[activity.category] || MapPin;
               return (
-                <Card key={activity.id} className="group">
-                  <CardContent className="flex items-start gap-3 p-4">
-                    <div className="flex items-center gap-2 pt-0.5">
-                      <GripVertical className="h-4 w-4 text-muted-foreground/40 cursor-grab" />
-                      <div
-                        className={`flex items-center justify-center h-8 w-8 rounded-full ${
-                          categoryColors[activity.category] || 'bg-gray-100'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4" />
-                      </div>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <div>
-                          <h4 className="font-medium">{activity.title}</h4>
-                          {activity.placeName && (
-                            <p className="text-sm text-muted-foreground flex items-center gap-1 mt-0.5">
-                              <MapPin className="h-3 w-3 flex-shrink-0" />
-                              <span className="truncate">{activity.placeName}</span>
-                              {activity.googleMapsUrl && (
-                                <a
-                                  href={activity.googleMapsUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-0.5 text-primary hover:underline flex-shrink-0 ml-1"
-                                  onClick={(e) => e.stopPropagation()}
-                                  title="Open in Google Maps"
-                                >
-                                  <Navigation className="h-3 w-3" />
-                                  <span className="text-xs">Map</span>
-                                </a>
-                              )}
-                            </p>
-                          )}
-                          {!activity.placeName && activity.googleMapsUrl && (
-                            <a
-                              href={activity.googleMapsUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-sm text-primary hover:underline mt-0.5"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <Navigation className="h-3 w-3" />
-                              Open in Google Maps
-                            </a>
-                          )}
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-                          onClick={() => deleteActivity.mutate(activity.id)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                      <div className="flex flex-wrap items-center gap-2 mt-2">
-                        {activity.startTime && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Clock className="h-3 w-3" />
-                            {activity.startTime}
-                            {activity.endTime && ` - ${activity.endTime}`}
-                          </span>
+                <div
+                  key={activity.id}
+                  className="group flex items-start gap-5 rounded-3xl bg-white p-6 shadow-sm hover:shadow-md transition-shadow border-0"
+                >
+                  <div
+                    className={`flex items-center justify-center h-12 w-12 rounded-xl flex-shrink-0 ${
+                      categoryColors[activity.category] || 'bg-gray-100'
+                    }`}
+                  >
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 className="text-lg font-semibold">{activity.title}</h4>
+                        {activity.placeName && (
+                          <p className="text-base text-muted-foreground flex items-center gap-1.5 mt-1">
+                            <MapPin className="h-3.5 w-3.5 flex-shrink-0" />
+                            <span className="truncate">{activity.placeName}</span>
+                            {activity.googleMapsUrl && (
+                              <a
+                                href={activity.googleMapsUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1 text-primary hover:underline flex-shrink-0 ml-1 text-sm font-medium"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <Navigation className="h-3 w-3" />
+                                Map
+                              </a>
+                            )}
+                          </p>
                         )}
-                        <Badge variant="secondary" className="text-xs">
-                          {activity.category}
-                        </Badge>
+                        {!activity.placeName && activity.googleMapsUrl && (
+                          <a
+                            href={activity.googleMapsUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1.5 text-[0.9375rem] text-primary hover:underline mt-1"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <Navigation className="h-3.5 w-3.5" />
+                            Open in Google Maps
+                          </a>
+                        )}
                       </div>
-                      {activity.notes && (
-                        <p className="text-sm text-muted-foreground mt-1">
-                          {activity.notes}
-                        </p>
-                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon-sm"
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => deleteActivity.mutate(activity.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-destructive" />
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="flex flex-wrap items-center gap-2 mt-2.5">
+                      {activity.startTime && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-sm text-muted-foreground">
+                          <Clock className="h-3 w-3" />
+                          {activity.startTime}
+                          {activity.endTime && ` - ${activity.endTime}`}
+                        </span>
+                      )}
+                      <Badge variant="secondary" className="capitalize">
+                        {activity.category}
+                      </Badge>
+                    </div>
+                    {activity.notes && (
+                      <p className="text-[0.9375rem] text-muted-foreground mt-2 leading-relaxed">
+                        {activity.notes}
+                      </p>
+                    )}
+                  </div>
+                </div>
               );
             })}
         </div>
       ) : (
-        <div className="text-center py-8 text-muted-foreground">
-          <p>No activities planned for this day yet.</p>
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <div className="flex items-center justify-center h-16 w-16 rounded-full bg-muted mb-4">
+            <MapPin className="h-7 w-7 text-muted-foreground" />
+          </div>
+          <p className="text-base text-muted-foreground">No activities planned for this day yet.</p>
         </div>
       )}
 
       {/* Add activity */}
       {showAddForm && currentDay ? (
-        <div className="mt-4">
+        <div className="mt-5">
           <ActivityForm
             tripId={tripId}
             dayId={currentDay.id}
@@ -237,14 +240,13 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
           />
         </div>
       ) : (
-        <Button
-          variant="outline"
-          className="w-full mt-4"
+        <button
+          className="w-full mt-5 flex items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-border py-5 text-base font-medium text-muted-foreground hover:border-primary hover:text-primary transition-colors"
           onClick={() => setShowAddForm(true)}
         >
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="h-4 w-4" />
           Add Activity
-        </Button>
+        </button>
       )}
     </div>
   );

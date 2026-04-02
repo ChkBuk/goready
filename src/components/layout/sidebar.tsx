@@ -20,13 +20,13 @@ export function Sidebar() {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 border-r border-border/50 bg-white">
+    <aside className="hidden md:flex md:w-64 md:flex-col md:fixed md:inset-y-0 shadow-sm bg-white">
       {/* Logo */}
       <div className="flex items-center gap-2.5 px-6 py-5">
         <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-primary text-white">
           <MapPin className="h-4 w-4" />
         </div>
-        <span className="text-lg font-semibold tracking-tight">GoReady</span>
+        <span className="text-xl font-semibold tracking-tight">GoReady</span>
       </div>
 
       {/* Navigation */}
@@ -39,13 +39,13 @@ export function Sidebar() {
               key={item.label}
               href={item.href}
               className={cn(
-                'flex items-center gap-3 rounded-xl px-4 py-2.5 text-sm font-medium transition-colors',
+                'flex items-center gap-3 rounded-xl px-5 py-3 text-base font-medium transition-colors',
                 isActive
                   ? 'bg-accent text-primary'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground'
               )}
             >
-              <item.icon className="h-[18px] w-[18px]" />
+              <item.icon className="h-5 w-5" />
               {item.label}
             </Link>
           );
@@ -53,7 +53,7 @@ export function Sidebar() {
       </nav>
 
       {/* User section */}
-      <div className="border-t border-border/50 p-4">
+      <div className="border-t border-border/30 p-4">
         <div className="flex items-center gap-3">
           <Avatar className="h-9 w-9">
             {user?.avatarUrl && <AvatarImage src={user.avatarUrl} alt={user.name} />}
@@ -62,8 +62,8 @@ export function Sidebar() {
             </AvatarFallback>
           </Avatar>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.name}</p>
-            <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+            <p className="text-base font-medium truncate">{user?.name}</p>
+            <p className="text-sm text-muted-foreground truncate">{user?.email}</p>
           </div>
           <Button variant="ghost" size="icon" onClick={logout} title="Sign out">
             <LogOut className="h-4 w-4" />

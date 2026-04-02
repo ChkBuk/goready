@@ -47,7 +47,7 @@ export default function RegisterPage() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4 py-12 bg-muted/30">
-      <div className="w-full max-w-md rounded-2xl bg-card p-8 md:p-10 shadow-lg border border-border/50">
+      <div className="w-full max-w-lg rounded-3xl bg-white p-10 md:p-12 shadow-lg border-0">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <div className="flex items-center gap-2.5">
@@ -57,11 +57,11 @@ export default function RegisterPage() {
               <span className="text-2xl font-semibold tracking-tight">GoReady</span>
             </div>
           </div>
-          <h1 className="text-2xl font-bold">Create your account</h1>
-          <p className="text-muted-foreground mt-1">Start planning your perfect trip</p>
+          <h1 className="text-2xl font-medium">Create your account</h1>
+          <p className="text-base text-muted-foreground mt-1">Start planning your perfect trip</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="rounded-xl bg-destructive/10 p-4 text-sm text-destructive">
               {error}
@@ -117,12 +117,12 @@ export default function RegisterPage() {
             />
           </div>
 
-          <Button type="submit" className="w-full rounded-full h-11" disabled={isSubmitting}>
+          <Button type="submit" className="w-full rounded-full h-12" disabled={isSubmitting}>
             {isSubmitting ? 'Creating account...' : 'Create account'}
           </Button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="mt-6 text-center text-base text-muted-foreground">
           Already have an account?{' '}
           <Link href="/login" className="text-primary hover:underline font-medium">
             Sign in

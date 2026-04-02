@@ -6,7 +6,6 @@ import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { X, MapPin, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -42,10 +41,8 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
   const [googleMapsUrl, setGoogleMapsUrl] = useState('');
   const [notes, setNotes] = useState('');
 
-  // Auto-suggest Google Maps URL when place name or address changes
   useEffect(() => {
     if ((placeName || address) && !googleMapsUrl.startsWith('https://www.google.com/maps/place/')) {
-      // Only auto-fill if user hasn't pasted a specific Maps link
       setGoogleMapsUrl(buildGoogleMapsUrl(placeName, address));
     }
   }, [placeName, address]);
@@ -77,133 +74,134 @@ export function ActivityForm({ tripId, dayId, onClose, onSuccess }: Props) {
   };
 
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between pb-3">
-        <CardTitle className="text-base">Add Activity</CardTitle>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="space-y-1.5">
-            <Label htmlFor="actTitle">Title</Label>
+    <div className="rounded-3xl bg-white p-8 shadow-md border-0">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-medium">Add Activity</h3>
+        <button
+          className="flex items-center justify-center h-8 w-8 rounded-full hover:bg-muted transition-colors"
+          onClick={onClose}
+        >
+          <X className="h-4 w-4 text-muted-foreground" />
+        </button>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-2">
+          <Label htmlFor="actTitle">Title</Label>
+          <Input
+            id="actTitle"
+            placeholder="e.g., Visit Colosseum"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="actCategory">Category</Label>
+          <select
+            id="actCategory"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            {categories.map((c) => (
+              <option key={c.value} value={c.value}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="actStart">Start Time</Label>
             <Input
-              id="actTitle"
-              placeholder="e.g., Visit Colosseum"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
+              id="actStart"
+              type="time"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
             />
           </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="actCategory">Category</Label>
-            <select
-              id="actCategory"
-              className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {categories.map((c) => (
-                <option key={c.value} value={c.value}>
-                  {c.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <Label htmlFor="actStart">Start Time</Label>
-              <Input
-                id="actStart"
-                type="time"
-                value={startTime}
-                onChange={(e) => setStartTime(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label htmlFor="actEnd">End Time</Label>
-              <Input
-                id="actEnd"
-                type="time"
-                value={endTime}
-                onChange={(e) => setEndTime(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-1.5">
-            <Label htmlFor="actPlace">Place Name</Label>
+          <div className="space-y-2">
+            <Label htmlFor="actEnd">End Time</Label>
             <Input
-              id="actPlace"
-              placeholder="e.g., Colosseum"
-              value={placeName}
-              onChange={(e) => setPlaceName(e.target.value)}
+              id="actEnd"
+              type="time"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </div>
+        </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="actAddress">Address</Label>
+        <div className="space-y-2">
+          <Label htmlFor="actPlace">Place Name</Label>
+          <Input
+            id="actPlace"
+            placeholder="e.g., Colosseum"
+            value={placeName}
+            onChange={(e) => setPlaceName(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="actAddress">Address</Label>
+          <Input
+            id="actAddress"
+            placeholder="e.g., Piazza del Colosseo, 1, Roma"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="actMapsUrl" className="flex items-center gap-1.5">
+            <MapPin className="h-3.5 w-3.5" />
+            Google Maps Link
+          </Label>
+          <div className="flex gap-2">
             <Input
-              id="actAddress"
-              placeholder="e.g., Piazza del Colosseo, 1, Roma"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              id="actMapsUrl"
+              placeholder="Auto-generated or paste your own"
+              value={googleMapsUrl}
+              onChange={(e) => setGoogleMapsUrl(e.target.value)}
+              className="flex-1"
             />
+            {googleMapsUrl && (
+              <a
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center justify-center h-10 w-10 rounded-xl border border-border hover:bg-muted transition-colors flex-shrink-0"
+                title="Open in Google Maps"
+              >
+                <ExternalLink className="h-4 w-4 text-muted-foreground" />
+              </a>
+            )}
           </div>
+          <p className="text-xs text-muted-foreground/80">
+            Auto-generated from place name and address. Paste your own link to override.
+          </p>
+        </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="actMapsUrl" className="flex items-center gap-1.5">
-              <MapPin className="h-3.5 w-3.5" />
-              Google Maps Link
-            </Label>
-            <div className="flex gap-2">
-              <Input
-                id="actMapsUrl"
-                placeholder="Paste a Google Maps link or auto-generated"
-                value={googleMapsUrl}
-                onChange={(e) => setGoogleMapsUrl(e.target.value)}
-                className="flex-1"
-              />
-              {googleMapsUrl && (
-                <a
-                  href={googleMapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center h-9 w-9 rounded-md border border-input hover:bg-muted transition-colors"
-                  title="Open in Google Maps"
-                >
-                  <ExternalLink className="h-4 w-4 text-muted-foreground" />
-                </a>
-              )}
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Auto-generated from place name and address. Paste your own Google Maps link to override.
-            </p>
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="actNotes">Notes</Label>
+          <Input
+            id="actNotes"
+            placeholder="Any additional notes..."
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
 
-          <div className="space-y-1.5">
-            <Label htmlFor="actNotes">Notes</Label>
-            <Input
-              id="actNotes"
-              placeholder="Any additional notes..."
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-            />
-          </div>
-
-          <div className="flex gap-2 pt-2">
-            <Button type="button" variant="outline" className="flex-1" onClick={onClose}>
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1" disabled={createActivity.isPending}>
-              {createActivity.isPending ? 'Adding...' : 'Add'}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+        <div className="flex gap-3 pt-2">
+          <Button type="button" variant="outline" className="flex-1 h-12 rounded-full" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button type="submit" className="flex-1 h-12 rounded-full" disabled={createActivity.isPending}>
+            {createActivity.isPending ? 'Adding...' : 'Add Activity'}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

@@ -53,17 +53,17 @@ export default function NewTripPage() {
   };
 
   return (
-    <div className="px-5 py-8 md:px-10 max-w-lg mx-auto">
+    <div className="px-6 py-6 md:px-10 md:py-10 max-w-lg mx-auto">
       <div className="mb-6">
-        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+        <Link href="/dashboard" className="inline-flex items-center text-base font-medium text-muted-foreground hover:text-foreground transition-colors">
           <ArrowLeft className="mr-1.5 h-4 w-4" />
           Back
         </Link>
       </div>
 
-      <div className="rounded-2xl bg-card p-6 md:p-8 shadow-sm border border-border/50">
-        <h1 className="text-xl font-bold mb-6">Create New Trip</h1>
-          <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="rounded-3xl bg-white p-8 md:p-10 shadow-md border-0">
+        <h1 className="text-2xl font-medium mb-6">Create New Trip</h1>
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
               <Label>Cover Image</Label>
               <ImageUpload value={coverImage} onChange={setCoverImage} variant="cover" />
@@ -119,7 +119,7 @@ export default function NewTripPage() {
               <Label htmlFor="currency">Currency</Label>
               <select
                 id="currency"
-                className="flex h-9 w-full rounded-lg border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors"
+                className=""
                 value={currency}
                 onChange={(e) => setCurrency(e.target.value)}
               >
@@ -136,7 +136,7 @@ export default function NewTripPage() {
 
             <Button
               type="submit"
-              className="w-full rounded-full h-11"
+              className="w-full rounded-full h-12"
               disabled={createTrip.isPending}
             >
               {createTrip.isPending ? 'Creating...' : 'Create Trip'}

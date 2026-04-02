@@ -5,7 +5,7 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm border-b border-border/50">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-sm shadow-sm">
         <div className="container mx-auto flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-2.5">
             <div className="flex items-center justify-center h-9 w-9 rounded-xl bg-primary text-white">
@@ -16,13 +16,13 @@ export default function LandingPage() {
           <div className="flex items-center gap-4">
             <Link
               href="/login"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
             >
               Sign In
             </Link>
             <Link
               href="/register"
-              className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-base font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
             >
               Get Started
             </Link>
@@ -34,11 +34,11 @@ export default function LandingPage() {
         {/* Hero section */}
         <section className="py-24 px-6 md:py-32 lg:py-40">
           <div className="container mx-auto max-w-4xl text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-1.5 text-sm font-medium text-primary mb-8">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/8 px-5 py-2 text-base font-medium text-primary mb-8">
               <Plane className="h-4 w-4" />
               Your all-in-one trip planner
             </div>
-            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl leading-[1.1]">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight leading-[1.1]">
               Plan your perfect trip,{' '}
               <span className="text-primary">all in one place</span>
             </h1>
@@ -65,7 +65,7 @@ export default function LandingPage() {
         </section>
 
         {/* Stats section */}
-        <section className="py-16 px-6 bg-muted/50 border-y border-border/50">
+        <section className="py-24 px-6 md:py-32 bg-muted/30">
           <div className="container mx-auto max-w-4xl">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
               {[
@@ -75,8 +75,8 @@ export default function LandingPage() {
                 { value: 'Unlimited', label: 'Trip members' },
               ].map((stat) => (
                 <div key={stat.label}>
-                  <p className="text-2xl md:text-3xl font-bold text-primary">{stat.value}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{stat.label}</p>
+                  <p className="text-4xl md:text-5xl font-medium text-primary">{stat.value}</p>
+                  <p className="text-base text-muted-foreground mt-2">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -84,17 +84,17 @@ export default function LandingPage() {
         </section>
 
         {/* Features */}
-        <section className="py-20 px-6 md:py-28">
+        <section className="py-24 px-6 md:py-32">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+              <h2 className="text-2xl md:text-3xl font-medium tracking-tight">
                 Everything you need for your trip
               </h2>
-              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 From planning to budgeting, GoReady helps you organize every detail of your journey.
               </p>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {[
                 {
                   icon: Calendar,
@@ -122,7 +122,7 @@ export default function LandingPage() {
                   title: 'Expense tracking',
                   description:
                     'Record every expense, split costs with friends by any ratio, and see who owes whom.',
-                  color: 'bg-yellow-50 text-yellow-700',
+                  color: 'bg-amber-50 text-amber-600',
                 },
                 {
                   icon: Users,
@@ -141,15 +141,15 @@ export default function LandingPage() {
               ].map((feature) => (
                 <div
                   key={feature.title}
-                  className="rounded-2xl bg-card p-8 shadow-sm hover:shadow-md transition-shadow border border-border/50"
+                  className="rounded-3xl bg-white p-10 shadow-md hover:shadow-lg transition-shadow text-center"
                 >
-                  <div
-                    className={`inline-flex items-center justify-center h-12 w-12 rounded-xl ${feature.color} mb-5`}
-                  >
-                    <feature.icon className="h-6 w-6" />
+                  <div className="flex justify-center mb-6">
+                    <div className="flex items-center justify-center h-20 w-20 rounded-full bg-blue-100/60">
+                      <feature.icon className="h-7 w-7 text-foreground" strokeWidth={1.5} />
+                    </div>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
+                  <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
+                  <p className="text-base text-muted-foreground leading-relaxed">
                     {feature.description}
                   </p>
                 </div>
@@ -159,12 +159,12 @@ export default function LandingPage() {
         </section>
 
         {/* CTA section */}
-        <section className="py-20 px-6 md:py-28 bg-primary">
+        <section className="py-24 px-6 md:py-32 bg-primary rounded-none">
           <div className="container mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-white">
+            <h2 className="text-2xl md:text-3xl font-medium tracking-tight text-white">
               Ready to plan your next adventure?
             </h2>
-            <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto">
+            <p className="mt-4 text-lg text-white/80 max-w-xl mx-auto leading-relaxed">
               Join GoReady and start organizing your perfect trip today. It&apos;s free to get started.
             </p>
             <div className="mt-8">
@@ -180,7 +180,7 @@ export default function LandingPage() {
         </section>
       </main>
 
-      <footer className="border-t py-10 px-6 text-center text-sm text-muted-foreground">
+      <footer className="py-10 px-6 text-center text-base text-muted-foreground">
         <div className="container mx-auto">
           <div className="flex items-center justify-center gap-2.5 mb-4">
             <div className="flex items-center justify-center h-7 w-7 rounded-lg bg-primary text-white">

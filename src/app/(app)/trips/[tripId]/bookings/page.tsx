@@ -89,14 +89,14 @@ export default function TripBookingsPage() {
   });
 
   return (
-    <div className="px-5 py-8 md:px-10 max-w-2xl mx-auto">
-      <Link href={`/trips/${tripId}`} className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
+    <div className="px-6 py-6 md:px-10 md:py-10 max-w-2xl mx-auto">
+      <Link href={`/trips/${tripId}`} className="inline-flex items-center text-base font-medium text-muted-foreground hover:text-foreground transition-colors mb-6">
         <ArrowLeft className="mr-1.5 h-4 w-4" />
         Back to Trip
       </Link>
 
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-xl font-bold tracking-tight">Bookings</h1>
+        <h1 className="text-2xl font-medium tracking-tight">Bookings</h1>
       </div>
 
       {showAddForm ? (
@@ -112,7 +112,7 @@ export default function TripBookingsPage() {
               <div className="space-y-1.5">
                 <Label>Type</Label>
                 <select
-                  className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm"
+                  className=""
                   value={type}
                   onChange={(e) => setType(e.target.value)}
                 >
@@ -214,19 +214,19 @@ export default function TripBookingsPage() {
             const Icon = typeIcons[booking.type] || Ticket;
             return (
               <Card key={booking.id}>
-                <CardContent className="flex items-center gap-3 p-4">
-                  <div className="flex items-center justify-center h-9 w-9 rounded-full bg-primary/10">
-                    <Icon className="h-4 w-4 text-primary" />
+                <CardContent className="flex items-center gap-3 p-5">
+                  <div className="flex items-center justify-center h-10 w-10 rounded-full bg-primary/10">
+                    <Icon className="h-5 w-5 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="font-medium text-sm">
+                      <p className="font-medium text-base">
                         {booking.origin && booking.destination
                           ? `${booking.origin} → ${booking.destination}`
                           : booking.provider || booking.type}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
                       {booking.provider && <span>{booking.provider}</span>}
                       {booking.confirmationNo && <span>#{booking.confirmationNo}</span>}
                       {booking.departureAt && (
@@ -238,11 +238,11 @@ export default function TripBookingsPage() {
                   </div>
                   <div className="text-right">
                     {booking.cost && (
-                      <p className="font-semibold text-sm">
+                      <p className="font-semibold text-base">
                         ${parseFloat(booking.cost).toFixed(2)}
                       </p>
                     )}
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary">
                       {booking.status}
                     </Badge>
                   </div>

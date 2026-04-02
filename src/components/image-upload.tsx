@@ -47,7 +47,7 @@ export function ImageUpload({ value, onChange, className, variant = 'cover' }: I
     return (
       <div className={cn('relative inline-block', className)}>
         <div
-          className="relative h-20 w-20 rounded-full overflow-hidden bg-muted cursor-pointer border-2 border-border hover:border-primary transition-colors"
+          className="relative h-24 w-24 rounded-full overflow-hidden bg-muted cursor-pointer border-2 border-border hover:border-primary transition-colors"
           onClick={() => inputRef.current?.click()}
         >
           {value ? (
@@ -88,7 +88,7 @@ export function ImageUpload({ value, onChange, className, variant = 'cover' }: I
   return (
     <div className={cn('relative', className)}>
       <div
-        className="relative h-44 w-full rounded-2xl overflow-hidden bg-muted/50 cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
+        className="relative h-48 w-full rounded-3xl overflow-hidden bg-muted/50 cursor-pointer border-2 border-dashed border-border hover:border-primary transition-colors"
         onClick={() => inputRef.current?.click()}
       >
         {value ? (

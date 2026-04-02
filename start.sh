@@ -92,4 +92,37 @@ echo -e "${GREEN}  DB:       ${DB_URL}${NC}"
 echo -e "${GREEN}========================================${NC}"
 echo ""
 
-npm run dev
+# ── Kill any leftover processes from previous runs ──
+echo -e "${YELLOW}Cleaning up stale processes...${NC}"
+lsof -ti:3000 2>/dev/null | xargs kill -9 2>/dev/null || true
+lsof -ti:4000 2>/dev/null | xargs kill -9 2>/dev/null || true
+sleep 1
+
+# ── Shutdown handler (kills entire process tree) ──
+cleanup() {
+  echo -e "\n${YELLOW}Shutting down...${NC}"
+  # Kill all child processes of this script
+  pkill -P $SERVER_PID 2>/dev/null
+  pkill -P $CLIENT_PID 2>/dev/null
+  kill $SERVER_PID $CLIENT_PID 2>/dev/null
+  # Also kill anything still on the ports
+  lsof -ti:3000 2>/dev/null | xargs kill -9 2>/dev/null || true
+  lsof -ti:4000 2>/dev/null | xargs kill -9 2>/dev/null || true
+  wait $SERVER_PID $CLIENT_PID 2>/dev/null
+  echo -e "${GREEN}Stopped.${NC}"
+  exit 0
+}
+trap cleanup SIGINT SIGTERM EXIT
+
+# Start backend server in the background
+echo -e "${YELLOW}Starting backend server...${NC}"
+cd "$ROOT_DIR/server" && npm run dev &
+SERVER_PID=$!
+
+# Start frontend (Next.js)
+echo -e "${YELLOW}Starting frontend...${NC}"
+cd "$ROOT_DIR" && npm run dev &
+CLIENT_PID=$!
+
+# Wait for both processes
+wait

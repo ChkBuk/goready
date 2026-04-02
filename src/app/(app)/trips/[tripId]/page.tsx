@@ -70,18 +70,18 @@ export default function TripDetailPage() {
   }
 
   return (
-    <div className="px-5 py-8 md:px-10">
+    <div className="px-6 py-6 md:px-10 md:py-10">
       {/* Header */}
       <div className="mb-8">
-        <Link href="/dashboard" className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors mb-4">
+        <Link href="/dashboard" className="inline-flex items-center text-base font-medium text-muted-foreground hover:text-foreground transition-colors mb-4">
           <ArrowLeft className="mr-1.5 h-4 w-4" />
           Back
         </Link>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{trip.title}</h1>
-            <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-muted-foreground">
+            <h1 className="text-3xl font-medium tracking-tight">{trip.title}</h1>
+            <div className="flex flex-wrap items-center gap-5 mt-2 text-base text-muted-foreground">
               <span className="flex items-center gap-1.5">
                 <MapPin className="h-4 w-4" />
                 {trip.destination}
@@ -111,13 +111,13 @@ export default function TripDetailPage() {
         <div className="flex gap-2 mt-3">
           <Link
             href={`/trips/${tripId}/expenses`}
-            className="inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+            className="inline-flex items-center justify-center rounded-full border border-border h-11 px-6 text-base font-medium hover:bg-muted transition-colors"
           >
             Expenses
           </Link>
           <Link
             href={`/trips/${tripId}/bookings`}
-            className="inline-flex items-center justify-center rounded-full border border-border px-4 py-2 text-sm font-medium hover:bg-muted transition-colors"
+            className="inline-flex items-center justify-center rounded-full border border-border h-11 px-6 text-base font-medium hover:bg-muted transition-colors"
           >
             Bookings
           </Link>
