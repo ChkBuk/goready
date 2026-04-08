@@ -1,6 +1,6 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY || '');
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 const FROM_EMAIL = process.env.FROM_EMAIL || 'GoReady <noreply@goready.com.au>';
 const APP_URL = process.env.CLIENT_URL || 'https://goready.com.au';
 
@@ -115,9 +115,13 @@ export async function sendInviteEmail({
 </body>
 </html>`;
 
+  if (!resend) {
+    console.warn('[Email] RESEND_API_KEY not set — skipping email send');
+    return false;
+  }
+
   try {
     console.log(`[Email] Sending invite to ${to} (isNewUser: ${isNewUser})`);
-    console.log(`[Email] Using API key: ${process.env.RESEND_API_KEY ? 'set (' + process.env.RESEND_API_KEY.slice(0, 8) + '...)' : 'NOT SET'}`);
     console.log(`[Email] From: ${FROM_EMAIL}`);
 
     const result = await resend.emails.send({
