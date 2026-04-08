@@ -231,19 +231,21 @@ export function DayPlanner({ tripId, days }: { tripId: string; days: TripDay[] }
         </div>
       )}
 
-      {/* Edit activity form */}
+      {/* Edit activity modal */}
       {editingActivity && currentDay && (
-        <div className="mt-6">
-          <ActivityForm
-            tripId={tripId}
-            dayId={currentDay.id}
-            activity={editingActivity}
-            onClose={() => setEditingActivity(null)}
-            onSuccess={() => {
-              setEditingActivity(null);
-              queryClient.invalidateQueries({ queryKey: ['itinerary', tripId] });
-            }}
-          />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setEditingActivity(null)}>
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <ActivityForm
+              tripId={tripId}
+              dayId={currentDay.id}
+              activity={editingActivity}
+              onClose={() => setEditingActivity(null)}
+              onSuccess={() => {
+                setEditingActivity(null);
+                queryClient.invalidateQueries({ queryKey: ['itinerary', tripId] });
+              }}
+            />
+          </div>
         </div>
       )}
 

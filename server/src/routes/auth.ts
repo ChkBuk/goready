@@ -277,7 +277,7 @@ authRouter.get('/google/callback', async (req: Request, res: Response) => {
     // Redirect to frontend with tokens
     const clientUrl = process.env.CLIENT_URL || 'http://localhost:3000';
     res.redirect(
-      `${clientUrl}/auth/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`
+      `${clientUrl}/callback?accessToken=${accessToken}&refreshToken=${refreshToken}`
     );
   } catch (error) {
     console.error('Google OAuth error:', error);

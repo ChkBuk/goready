@@ -37,12 +37,30 @@ export function TripMembers({
 
   const invite = useMutation({
     mutationFn: async () => {
-      const res = await api.post(`/api/trips/${tripId}/members`, { email, role });
+      const res = await api.post<{ message?: string }>(`/api/trips/${tripId}/members`, { email, role });
       if (!res.success) throw new Error(res.error);
+      return res;
+    },
+    onSuccess: (res) => {
+      const msg = (res.data as any)?.message || (res as any).message;
+      if (msg && msg.includes('register')) {
+        toast.success(msg);
+      } else {
+        toast.success('Member added!');
+      }
+      setEmail('');
+      queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+
+  const updateRole = useMutation({
+    mutationFn: async ({ userId, newRole }: { userId: string; newRole: string }) => {
+      const res = await api.put(`/api/trips/${tripId}/members/${userId}`, { role: newRole });
+      if (!res.success) throw new Error(res.error as string);
     },
     onSuccess: () => {
-      toast.success('Member invited!');
-      setEmail('');
+      toast.success('Role updated');
       queryClient.invalidateQueries({ queryKey: ['trip', tripId] });
     },
     onError: (err: Error) => toast.error(err.message),
@@ -73,7 +91,7 @@ export function TripMembers({
             e.preventDefault();
             invite.mutate();
           }}
-          className="flex flex-col sm:flex-row gap-3"
+          className="space-y-3"
         >
           <Input
             type="email"
@@ -81,18 +99,21 @@ export function TripMembers({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="flex-1"
+            className="w-full"
           />
-          <select
-            value={role}
-            onChange={(e) => setRole(e.target.value as 'editor' | 'viewer')}
-          >
-            <option value="viewer">Viewer</option>
-            <option value="editor">Editor</option>
-          </select>
-          <Button type="submit" className="rounded-full" disabled={invite.isPending}>
-            {invite.isPending ? 'Inviting...' : 'Invite'}
-          </Button>
+          <div className="flex gap-3">
+            <select
+              value={role}
+              onChange={(e) => setRole(e.target.value as 'editor' | 'viewer')}
+              className="flex-1"
+            >
+              <option value="viewer">Viewer</option>
+              <option value="editor">Editor</option>
+            </select>
+            <Button type="submit" className="rounded-full px-8" disabled={invite.isPending}>
+              {invite.isPending ? 'Inviting...' : 'Invite'}
+            </Button>
+          </div>
         </form>
       </div>
 
@@ -114,17 +135,28 @@ export function TripMembers({
                 {member.userEmail}
               </p>
             </div>
-            <Badge variant="secondary" className={roleColors[member.role] || ''}>
-              {member.role}
-            </Badge>
-            {member.role !== 'owner' && (
-              <Button
-                variant="ghost"
-                size="icon-sm"
-                onClick={() => removeMember.mutate(member.userId)}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+            {member.role === 'owner' ? (
+              <Badge variant="secondary" className={roleColors.owner}>
+                owner
+              </Badge>
+            ) : (
+              <>
+                <select
+                  value={member.role}
+                  onChange={(e) => updateRole.mutate({ userId: member.userId, newRole: e.target.value })}
+                  className="h-8 rounded-lg border border-border bg-white px-2 text-sm font-medium cursor-pointer"
+                >
+                  <option value="viewer">Viewer</option>
+                  <option value="editor">Editor</option>
+                </select>
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  onClick={() => removeMember.mutate(member.userId)}
+                >
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </>
             )}
           </div>
         ))}

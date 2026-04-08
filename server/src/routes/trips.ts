@@ -5,6 +5,7 @@ import { eq, and, or, desc } from 'drizzle-orm';
 import { authenticate } from '../middleware/auth.js';
 import { requireTripAccess } from '../middleware/tripAccess.js';
 import { createTripSchema, updateTripSchema, inviteMemberSchema, updateMemberRoleSchema } from '../utils/validators.js';
+import { sendInviteEmail } from '../utils/email.js';
 
 export const tripsRouter = Router();
 
@@ -194,10 +195,29 @@ tripsRouter.post(
       const { email, role } = parsed.data;
       const tripId = req.params.id as string;
 
+      // Get trip details and inviter info for the email
+      const [trip] = await db.select().from(trips).where(eq(trips.id, tripId));
+      const inviterUser = (req as any).user;
+
       // Find user by email
       const [user] = await db.select().from(users).where(eq(users.email, email));
+
       if (!user) {
-        res.status(404).json({ success: false, error: 'User not found. They need to create an account first.' });
+        // User not registered — send invitation email to sign up
+        if (trip && inviterUser) {
+          await sendInviteEmail({
+            to: email,
+            inviterName: inviterUser.name || 'A friend',
+            tripTitle: trip.title,
+            tripDestination: trip.destination,
+            isNewUser: true,
+          });
+        }
+        res.status(200).json({
+          success: true,
+          data: null,
+          message: `Invitation email sent to ${email}. They need to register first.`,
+        });
         return;
       }
 
@@ -216,6 +236,17 @@ tripsRouter.post(
         .insert(tripMembers)
         .values({ tripId, userId: user.id, role: role || 'viewer' })
         .returning();
+
+      // Send notification email to existing user
+      if (trip && inviterUser) {
+        await sendInviteEmail({
+          to: email,
+          inviterName: inviterUser.name || 'A friend',
+          tripTitle: trip.title,
+          tripDestination: trip.destination,
+          isNewUser: false,
+        });
+      }
 
       res.status(201).json({ success: true, data: { ...member, user: { id: user.id, name: user.name, email: user.email } } });
     } catch (error) {
